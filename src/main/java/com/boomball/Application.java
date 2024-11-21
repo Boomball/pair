@@ -42,11 +42,9 @@ public class Application {
         // calculate
         int maxPobi = 0;
         int maxCrong = 0;
-
         for (int page : pobi) {
             maxPobi = Math.max(maxPobi, calculate(page));
         }
-
         for (int page : crong) {
             maxCrong = Math.max(maxCrong, calculate(page));
         }

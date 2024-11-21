@@ -4,7 +4,7 @@ import com.boomball.view.InputView;
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+public class Application {
     public static void main(String[] args) {
         InputView inputView = new InputView();
         String pobiPages = inputView.readPages();
@@ -20,10 +20,10 @@ public class Main {
 
     public static List<Integer> handlePages(String pages) {
         String regex = "\\[\\d{1,3},\\s?\\d{1,3}\\]";
-        if (pages.matches(regex)) {
+        if (!pages.matches(regex)) {
             throw new IllegalArgumentException();
         }
-        return Arrays.stream(pages.replaceAll("\\[\\]", "")
+        return Arrays.stream(pages.replaceAll("[\\[\\]]", "")
                 .split(",")).map(Integer::parseInt).toList();
     }
 
@@ -35,7 +35,7 @@ public class Main {
         if (!isSequential(pobi) || !isSequential(crong)) {
             return -1;
         }
-        if (pobi.get(0) % 2 != 0 || crong.get(0) % 2 != 0) {
+        if (pobi.get(0) % 2 == 0 || crong.get(0) % 2 == 0) {
             return -1;
         }
 

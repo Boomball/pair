@@ -7,12 +7,15 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         InputView inputView = new InputView();
-        String pobi = inputView.readPages();
-        String crong = inputView.readPages();
+        String pobiPages = inputView.readPages();
+        String crongPages = inputView.readPages();
 
         // handler
-        handlePages(pobi);
-        handlePages(crong);
+        List<Integer> pobi = handlePages(pobiPages);
+        List<Integer> crong = handlePages(crongPages);
+
+        // solution
+        System.out.println(solution(pobi, crong));
     }
 
     public static List<Integer> handlePages(String pages) {

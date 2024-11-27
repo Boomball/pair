@@ -1,55 +1,43 @@
 package com.boomball;
 
+import com.boomball.util.Separator;
 import com.boomball.view.InputView;
-import java.util.Arrays;
+import com.boomball.view.OutputView;
 import java.util.List;
 
 public class Application {
     public static void main(String[] args) {
         InputView inputView = new InputView();
+        OutputView outputView = new OutputView();
+
         String pobiPages = inputView.readPages();
         String crongPages = inputView.readPages();
 
         // handler
-        List<Integer> pobi = handlePages(pobiPages);
-        List<Integer> crong = handlePages(crongPages);
+        List<Integer> pobi = Separator.separatePages(pobiPages);
+        List<Integer> crong = Separator.separatePages(crongPages);
 
         // solution
-        System.out.println(solution(pobi, crong));
-    }
-
-    public static List<Integer> handlePages(String pages) {
-        String regex = "\\[\\d{1,3},\\s?\\d{1,3}\\]";
-        if (!pages.matches(regex)) {
-            throw new IllegalArgumentException();
-        }
-        return Arrays.stream(pages.replaceAll("[\\[\\]]", "")
-                .split(",")).map(Integer::parseInt).toList();
+        outputView.showWinner(solution(pobi, crong));
     }
 
     public static int solution(List<Integer> pobi, List<Integer> crong) {
         // validate
-        if (pobi.size() != 2 || crong.size() != 2) {
-            return -1;
-        }
-        if (!isSequential(pobi) || !isSequential(crong)) {
-            return -1;
-        }
-        if (pobi.get(0) % 2 == 0 || crong.get(0) % 2 == 0) {
+        try {
+            validate(pobi, crong);
+        } catch (IllegalArgumentException e){
             return -1;
         }
 
         // calculate
-        int maxPobi = 0;
-        int maxCrong = 0;
-        for (int page : pobi) {
-            maxPobi = Math.max(maxPobi, calculate(page));
-        }
-        for (int page : crong) {
-            maxCrong = Math.max(maxCrong, calculate(page));
-        }
+        int maxPobi = getMax(pobi.getFirst(), pobi.getLast());
+        int maxCrong = getMax(crong.getFirst(), crong.getLast());
 
         return getWinner(maxPobi, maxCrong);
+    }
+
+    private static int getMax(int leftPage, int rightPage) {
+        return Math.max(calculate(leftPage), calculate(rightPage));
     }
 
     private static int getWinner(int pobi, int crong) {
@@ -74,8 +62,21 @@ public class Application {
         return Math.max(sum, mul);
     }
 
-    private static boolean isSequential(List<Integer> pages) {
-        return pages.get(0) == pages.get(1) - 1;
+    private static void validate(List<Integer> pobi, List<Integer> crong) {
+        // validate
+        if (pobi.size() != 2 || crong.size() != 2) {
+            throw new IllegalArgumentException();
+        }
+        if (isNonSequential(pobi) || isNonSequential(crong)) {
+            throw new IllegalArgumentException();
+        }
+        if (pobi.getFirst() % 2 == 0 || crong.getFirst() % 2 == 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static boolean isNonSequential(List<Integer> pages) {
+        return pages.get(0) != pages.get(1) - 1;
     }
 }
 
